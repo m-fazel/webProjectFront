@@ -12,7 +12,6 @@ function AnsweringPlayer({type}) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        // Handle form submission, such as saving the answer or sending it to a backend
         console.log('Selected option:', selectedOption);
     };
 
@@ -20,23 +19,23 @@ function AnsweringPlayer({type}) {
         <div>
             <NavbarPlayer /> {/* Using the existing NavbarPlayer component */}
 
-            <div class="container pt-4">
-                <div class="row g-4">
-                    <div class="col-12 col-md-4">
-                        <img src="/img/question.jpg" alt="question" class="w-100 rounded-4 shadow" />
+            <div className="container pt-4">
+                <div className="row g-4">
+                    <div className="col-12 col-md-4">
+                        <img src="/img/question.jpg" alt="question" className="w-100 rounded-4 shadow" />
                     </div>
-                    <div class="col-12 col-md-8 align-self-center">
+                    <div className="col-12 col-md-8 align-self-center">
                         <form onSubmit={handleSubmit}>
-                            <div class="row g-4">
-                                <div class="col-12">
+                            <div className="row g-4">
+                                <div className="col-12">
                                     <h4>سوالی از طراح دیگر؟</h4>
                                 </div>
-                                <div class="col-12">
-                                    <div class="row g-4 row-cols-1">
-                                        <div class="col">
-                                            <div class="form-check">
+                                <div className="col-12">
+                                    <div className="row g-4 row-cols-1">
+                                        <div className="col">
+                                            <div className="form-check">
                                                 <input
-                                                    class="form-check-input"
+                                                    className="form-check-input"
                                                     type="radio"
                                                     name="option"
                                                     id="first-option"
@@ -45,15 +44,15 @@ function AnsweringPlayer({type}) {
                                                     onChange={handleOptionChange}
                                                     required
                                                 />
-                                                <label class="form-check-label" htmlFor="first-option">
+                                                <label className="form-check-label" htmlFor="first-option">
                                                     گزینه اول
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="col">
-                                            <div class="form-check">
+                                        <div className="col">
+                                            <div className="form-check">
                                                 <input
-                                                    class="form-check-input"
+                                                    className="form-check-input"
                                                     type="radio"
                                                     name="option"
                                                     id="second-option"
@@ -62,15 +61,15 @@ function AnsweringPlayer({type}) {
                                                     onChange={handleOptionChange}
                                                     required
                                                 />
-                                                <label class="form-check-label" htmlFor="second-option">
+                                                <label className="form-check-label" htmlFor="second-option">
                                                     گزینه دوم
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="col">
-                                            <div class="form-check">
+                                        <div className="col">
+                                            <div className="form-check">
                                                 <input
-                                                    class="form-check-input"
+                                                    className="form-check-input"
                                                     type="radio"
                                                     name="option"
                                                     id="third-option"
@@ -79,15 +78,15 @@ function AnsweringPlayer({type}) {
                                                     onChange={handleOptionChange}
                                                     required
                                                 />
-                                                <label class="form-check-label" htmlFor="third-option">
+                                                <label className="form-check-label" htmlFor="third-option">
                                                     گزینه سوم
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="col">
-                                            <div class="form-check">
+                                        <div className="col">
+                                            <div className="form-check">
                                                 <input
-                                                    class="form-check-input"
+                                                    className="form-check-input"
                                                     type="radio"
                                                     name="option"
                                                     id="fourth-option"
@@ -96,15 +95,15 @@ function AnsweringPlayer({type}) {
                                                     onChange={handleOptionChange}
                                                     required
                                                 />
-                                                <label class="form-check-label" htmlFor="fourth-option">
+                                                <label className="form-check-label" htmlFor="fourth-option">
                                                     گزینه چهارم
                                                 </label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary">
+                                <div className="col-12">
+                                    <button type="submit" className="btn btn-primary">
                                         ارسال
                                     </button>
                                 </div>

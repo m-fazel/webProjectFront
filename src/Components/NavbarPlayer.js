@@ -2,9 +2,8 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 function NavbarPlayer() {
-    const location = useLocation(); // Get the current location (route)
+    const location = useLocation();
 
-    // Function to determine if the link is active based on the current route
     const isActive = (path) => location.pathname === path ? 'active' : '';
 
     return (

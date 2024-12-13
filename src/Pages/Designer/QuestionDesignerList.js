@@ -1,129 +1,114 @@
-import React, { useEffect } from 'react';
-import NavbarDesigner from '../../Components/NavbarDesigner'; // Import NavbarDesigner
-import { Link } from 'react-router-dom'; // Import Link component for navigation
+import React, { useState, useEffect } from 'react';
+import NavbarDesigner from '../../Components/NavbarDesigner';
+import { Link } from 'react-router-dom';
+import useApiRequest from '../../Utils/UseApiRequest';
 
 function QuestionDesignerList() {
+  useEffect(() => {
+    document.title = "سامانه پروژه سوال پیچ | مدیریت سوالات | طراح";
+  }, []);
+
+  const apiRequest = useApiRequest();
+  const [questions, setQuestions] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    document.title = "سامانه پروژه سوال پیچ | مدیریت سوالات | طراح"
+    const fetchQuestions = async () => {
+      try {
+        const response = await apiRequest('/get_designed_question', 'POST', true);
+        if (response.success) {
+          setQuestions(response.data.table);
+        } else {
+          alert(response.message || 'Failed to fetch questions');
+        }
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    fetchQuestions();
   }, []);
 
   return (
     <div>
-      <NavbarDesigner /> {/* Include NavbarDesigner */}
+      <NavbarDesigner />
 
-      <div class="container pt-4">
-        {/* Add Question Button */}
-        <div class="mb-4">
-          <Link to="/question-designer-add" class="btn btn-primary">افزودن سوال جدید</Link>
+      <div className="container pt-4">
+        <div className="mb-4">
+          <Link to="/question-designer-add" className="btn btn-primary">افزودن سوال جدید</Link>
         </div>
 
-        {/* Questions Table */}
-        <h4 class="mb-4">سوالات طراحی شده</h4>
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th class="col-1">#</th>
-              <th class="col-6">صورت سوال</th>
-              <th>تعداد پاسخ های صحیح</th>
-              <th>تعداد پاسخ های غلط</th>
-              <th>عملیات</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>html چیست؟</td>
-              <td>20</td>
-              <td>10</td>
-              <td>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#question-1-similar">
-                  انتخاب سوالات مشابه
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>css چیست؟</td>
-              <td>10</td>
-              <td>15</td>
-              <td>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#question-2-similar">
-                  انتخاب سوالات مشابه
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <h4 className="mb-4">سوالات طراحی شده</h4>
+        {error ? (
+          <div className="alert alert-danger">{error}</div>
+        ) : (
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th className="col-1">#</th>
+                <th className="col-6">صورت سوال</th>
+                <th>تعداد پاسخ های صحیح</th>
+                <th>تعداد پاسخ های غلط</th>
+                <th>عملیات</th>
+              </tr>
+            </thead>
+            <tbody>
+              {questions.length > 0 ? (
+                questions.map((question, index) => (
+                  <tr key={question.id || index}>
+                    <td>{question.id}</td>
+                    <td>{question.question}</td>
+                    <td>{question.correct_answers || 0}</td>
+                    <td>{question.incorrect_answers || 0}</td>
+                    <td>
+                      <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target={`#question-${question.id}-similar`}>
+                        انتخاب سوالات مشابه
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="text-center">
+                    هیچ سوالی موجود نیست
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
 
-      {/* Modal for Question 1 */}
-      <div class="modal fade" id="question-1-similar" tabIndex="-1" aria-labelledby="question-1-similar" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <form action="" method="post">
-              <div class="modal-header">
-                <h5 class="modal-title">افزودن سوالات مشابه</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <b>html چیست؟</b>
+      {questions.map((question) => (
+        <div key={question.id} className="modal fade" id={`question-${question.id}-similar`} tabIndex="-1" aria-labelledby={`question-${question.id}-similar`} aria-hidden="true">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <form action="" method="post">
+                <div className="modal-header">
+                  <h5 className="modal-title">افزودن سوالات مشابه</h5>
+                  <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div className="modal-body">
+                  <b>{question.question}</b>
 
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="question-2-1" />
-                  <label class="form-check-label" htmlFor="question-2-1">
-                    css چیست؟
-                  </label>
+                  {questions.filter(q => q.id !== question.id).map((similarQuestion) => (
+                    <div key={similarQuestion.id} className="form-check">
+                      <input className="form-check-input" type="checkbox" value="" id={`question-${question.id}-${similarQuestion.id}`} />
+                      <label className="form-check-label" htmlFor={`question-${question.id}-${similarQuestion.id}`}>
+                        {similarQuestion.question}
+                      </label>
+                    </div>
+                  ))}
                 </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="question-2-3" />
-                  <label class="form-check-label" htmlFor="question-2-3">
-                    سوال از طراح دیگر
-                  </label>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">خروج</button>
+                  <button type="submit" className="btn btn-primary">ذخیره</button>
                 </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">خروج</button>
-                <button type="submit" class="btn btn-primary">ذخیره</button>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Modal for Question 2 */}
-      <div class="modal fade" id="question-2-similar" tabIndex="-1" aria-labelledby="question-2-similar" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <form action="" method="post">
-              <div class="modal-header">
-                <h5 class="modal-title">افزودن سوالات مشابه</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <b>css چیست؟</b>
-
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="question-2-1" />
-                  <label class="form-check-label" htmlFor="question-2-1">
-                    html چیست؟
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="question-2-3" />
-                  <label class="form-check-label" htmlFor="question-2-3">
-                    سوال از طراح دیگر
-                  </label>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">خروج</button>
-                <button type="submit" class="btn btn-primary">ذخیره</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+      ))}
     </div>
   );
 }

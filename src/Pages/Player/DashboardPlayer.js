@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import NavbarPlayer from '../../Components/NavbarPlayer'; // Import NavbarPlayer
+import NavbarPlayer from '../../Components/NavbarPlayer';
 
 function DashboardPlayer() {
 
@@ -11,7 +11,7 @@ function DashboardPlayer() {
     <div>
       <NavbarPlayer />
 
-      <div class="container pt-4">
+      <div className="container pt-4">
         داشبورد بازیکن
       </div>
     </div>

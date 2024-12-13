@@ -7,8 +7,8 @@ function QuestionPlayerList() {
         document.title = "سامانه پروژه سوال پیچ | مدیریت سوالات | بازیکن";
     }, []);
 
-    const [category, setCategory] = useState('1'); // Default category: programming
-    const navigate = useNavigate(); // React Router's useNavigate hook
+    const [category, setCategory] = useState('1');
+    const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();

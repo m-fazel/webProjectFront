@@ -1,17 +1,16 @@
 import React, { useEffect } from 'react';
-import NavbarDesigner from '../../Components/NavbarDesigner'; // Import NavbarDesigner
+import NavbarDesigner from '../../Components/NavbarDesigner';
 
 function DashboardDesigner() {
-
   useEffect(() => {
     document.title = "سامانه پروژه سوال پیچ | داشبورد | طراح"
   }, []);
 
   return (
     <div>
-      <NavbarDesigner /> {/* Include NavbarDesigner */}
+      <NavbarDesigner />
 
-      <div class="container pt-4">
+      <div className="container pt-4">
         داشبورد طراح
       </div>
     </div>

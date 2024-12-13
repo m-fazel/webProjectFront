@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { setToken } from '../../api'; // Import the setToken function
-import { apiRequest } from '../../api'; // Import the apiRequest function
+import { Link, useNavigate } from 'react-router-dom';
+import useApiRequest from '../../Utils/UseApiRequest';
 
-function Signup({ setIsLoggedIn, setUserType }) {
+function Signup() {
+    const apiRequest = useApiRequest();
     const [firstname, setFirstname] = useState('');
     const [lastname, setLastname] = useState('');
     const [email, setEmail] = useState('');
-    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
-    const [userType, setUserTypeSelect] = useState(1);
+    const [type, setTypeSelect] = useState(1);
+    const navigate = useNavigate();
 
     useEffect(() => {
         document.title = "سامانه پروژه سوال پیچ | ثبت نام"
@@ -19,33 +19,26 @@ function Signup({ setIsLoggedIn, setUserType }) {
     const handleSignup = async (e) => {
         e.preventDefault();
 
-        // Validate that passwords match
         if (password !== passwordConfirm) {
             alert('Passwords do not match');
             return;
         }
 
-        // Prepare the signup data
         const signupData = {
             firstname,
             lastname,
             email,
-            username,
             password,
-            userType,
+            type,
         };
 
-        // Use the apiRequest function to handle the signup API call
         const response = await apiRequest('/signup', 'POST', false, signupData);
 
-        if (response && response.token) {
-            // If signup is successful and a token is returned, save the token and login the user
-            setToken(response.token);
-            setIsLoggedIn(true); // Set login state to true
-            setUserType(userType); // Set user type
+        if (response.success) {
+            alert("ثبت نام شما با موفقیت انجام شد، اکنون میتوانید وارد شوید");
+            navigate("/");
         } else {
-            // If signup fails, show an alert or handle errors
-            alert('Signup failed. Please check your details and try again.');
+            alert(response.error.message);
         }
     };
 
@@ -86,16 +79,7 @@ function Signup({ setIsLoggedIn, setUserType }) {
                                     id="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="username" className="form-label">نام کاربری</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="username"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
+                                    autoComplete="email"
                                 />
                             </div>
                             <div className="mb-3">
@@ -106,6 +90,7 @@ function Signup({ setIsLoggedIn, setUserType }) {
                                     id="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
+                                    autoComplete="new-password"
                                 />
                             </div>
                             <div className="mb-3">
@@ -116,6 +101,7 @@ function Signup({ setIsLoggedIn, setUserType }) {
                                     id="password_confirm"
                                     value={passwordConfirm}
                                     onChange={(e) => setPasswordConfirm(e.target.value)}
+                                    autoComplete="new-password"
                                 />
                             </div>
                             <div className="mb-3">
@@ -124,8 +110,8 @@ function Signup({ setIsLoggedIn, setUserType }) {
                                     name="type"
                                     id="type"
                                     className="form-select"
-                                    value={userType}
-                                    onChange={(e) => setUserTypeSelect(e.target.value)}
+                                    value={type}
+                                    onChange={(e) => setTypeSelect(parseInt(e.target.value))}
                                 >
                                     <option value="1">بازیکن</option>
                                     <option value="2">طراح سوال</option>
@@ -136,7 +122,7 @@ function Signup({ setIsLoggedIn, setUserType }) {
                             </div>
                         </form>
                     </div>
-                    <div class="card-footer">
+                    <div className="card-footer">
                         <Link to="/">قبلا ثیت نام کرده اید؟ به حساب خود وارد شوید</Link>
                     </div>
                 </div>

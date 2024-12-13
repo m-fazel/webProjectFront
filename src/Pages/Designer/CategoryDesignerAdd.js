@@ -1,43 +1,71 @@
 import React, { useEffect, useState } from 'react';
-import NavbarDesigner from '../../Components/NavbarDesigner'; // Import NavbarDesigner
+import NavbarDesigner from '../../Components/NavbarDesigner';
+import useApiRequest from '../../Utils/UseApiRequest';
 
 function CategoryDesignerAdd() {
     useEffect(() => {
         document.title = "سامانه پروژه سوال پیچ | افزودن دسته بندی | طراح"
     }, []);
 
-    // State hook for category name
-    const [name, setName] = useState('');
+    const apiRequest = useApiRequest();
+    
+    const [category, setCategory] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(false);
 
-    // Form submission handler
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Here you can send the form data to the server or handle it as needed
-        console.log({ name });
+
+        setError(null);
+        setSuccess(false);
+
+        const categoryData = { category };
+
+        try {
+            setLoading(true);
+            const response = await apiRequest('/new_category', 'POST', true, categoryData);
+
+            if (response.success) {
+                setSuccess(true);
+                setCategory('');
+            } else {
+                setError(response.error.message || 'خطا در افزودن دسته بندی');
+            }
+        } catch (err) {
+            setError(err || 'خطا در ارتباط با سرور');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <div>
             <NavbarDesigner /> {/* Include NavbarDesigner */}
 
-            <div class="container pt-4">
+            <div className="container pt-4">
                 <form onSubmit={handleSubmit}>
                     {/* Category Name Input */}
-                    <div class="mb-3">
-                        <label htmlFor="name" class="form-label">نام دسته بندی</label>
+                    <div className="mb-3">
+                        <label htmlFor="name" className="form-label">نام دسته بندی</label>
                         <input
                             type="text"
-                            class="form-control"
+                            className="form-control"
                             id="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
                             required
                         />
                     </div>
 
-                    {/* Submit Button */}
-                    <div class="mb-3">
-                        <button type="submit" class="btn btn-primary">افزودن</button>
+                    {error && <div className="alert alert-danger">{error}</div>}
+
+                    {success && <div className="alert alert-success">دسته بندی با موفقیت افزوده شد</div>}
+
+                    <div className="mb-3">
+                        <button type="submit" className="btn btn-primary" disabled={loading}>
+                            {loading ? 'در حال افزودن...' : 'افزودن'}
+                        </button>
                     </div>
                 </form>
             </div>
