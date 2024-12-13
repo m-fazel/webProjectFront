@@ -23,20 +23,22 @@ function QuestionDesignerAdd() {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
-    const fetchCategories = async () => {
-        try {
-            const response = await apiRequest('/get_categories', 'POST', true);
-            if (response.success && response.data.table) {
-                setCategories(response.data.table);
-            } else {
-                setError('خطا در بارگذاری دسته بندی ها');
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await apiRequest('/get_categories', 'POST', true);
+                if (response.success && response.data.table) {
+                    setCategories(response.data.table);
+                } else {
+                    setError('خطا در بارگذاری دسته بندی ها');
+                }
+            } catch (err) {
+                setError(err || 'خطا در ارتباط با سرور');
             }
-        } catch (err) {
-            setError(err || 'خطا در ارتباط با سرور');
-        }
-    };
-
-    fetchCategories();
+        };
+    
+        fetchCategories();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -46,12 +48,10 @@ function QuestionDesignerAdd() {
 
         const questionData = {
             question,
-            options: [
-                firstOption,
-                secondOption,
-                thirdOption,
-                fourthOption
-            ],
+            firstOption,
+            secondOption,
+            thirdOption,
+            fourthOption,
             correct,
             level,
             category,
@@ -191,7 +191,7 @@ function QuestionDesignerAdd() {
                                 {categories.length > 0 ? (
                                     categories.map((cat) => (
                                         <option key={cat.id} value={cat.id}>
-                                            {cat.category}
+                                            {cat.name}
                                         </option>
                                     ))
                                 ) : (

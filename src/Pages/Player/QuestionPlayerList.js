@@ -1,14 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import NavbarPlayer from '../../Components/NavbarPlayer';
+import useApiRequest from '../../Utils/UseApiRequest'; // Assuming useApiRequest is defined for API calls
 
 function QuestionPlayerList() {
     useEffect(() => {
         document.title = "سامانه پروژه سوال پیچ | مدیریت سوالات | بازیکن";
     }, []);
 
+    const apiRequest = useApiRequest();
+    const [answeredQuestions, setAnsweredQuestions] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState('1');
     const navigate = useNavigate();
+
+    // Fetch answered questions
+    useEffect(() => {
+        const fetchAnsweredQuestions = async () => {
+            const response = await apiRequest('/answered_question', 'POST', true);
+            if (response.success) {
+                setAnsweredQuestions(response.data.table); // Assuming response.data contains the list of answered questions
+            }else{
+                alert(response.error.message); // Handle errors
+            }
+        };
+
+        const fetchCategories = async () => {
+            const response = await apiRequest('/get_categories', 'POST', true);
+            if (response.success) {
+                setCategories(response.data.table); // Assuming response.data.categories contains the list of categories
+            }else{
+                alert(response.error.message); // Handle errors
+            }
+        };
+
+        fetchCategories();
+        fetchAnsweredQuestions();
+    }, []);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -43,16 +71,23 @@ function QuestionPlayerList() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr className="table-danger">
-                            <td>1</td>
-                            <td>html چیست؟</td>
-                            <td><Link className="link-underline link-underline-opacity-0" to="/designer-view/3">محمدفاضل سماواتی</Link></td>
-                        </tr>
-                        <tr className="table-success">
-                            <td>2</td>
-                            <td>css چیست؟</td>
-                            <td><Link className="link-underline link-underline-opacity-0" to="/designer-view/4">امین حسن زاده</Link></td>
-                        </tr>
+                        {answeredQuestions.length > 0 ? (
+                            answeredQuestions.map((question, index) => (
+                                <tr key={question.id} className={question.correct ? "table-success" : "table-danger"}>
+                                    <td>{index + 1}</td>
+                                    <td>{question.question}</td>
+                                    <td>
+                                        <Link className="link-underline link-underline-opacity-0" to={`/designer-view/${question.designer.id}`}>
+                                            {question.designer.name}
+                                        </Link>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="3" className="text-center">هیچ سوالی پاسخ داده نشده است</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
 
@@ -77,8 +112,15 @@ function QuestionPlayerList() {
                                                 value={category}
                                                 onChange={(e) => setCategory(e.target.value)}
                                             >
-                                                <option value="1">برنامه نویسی</option>
-                                                <option value="2">عمومی</option>
+                                                {categories.length > 0 ? (
+                                                    categories.map((cat) => (
+                                                        <option key={cat.id} value={cat.id}>
+                                                            {cat.name}
+                                                        </option>
+                                                    ))
+                                                ) : (
+                                                    <option value="1">دسته بندی ای وجود ندارد</option>
+                                                )}
                                             </select>
                                         </div>
                                         <div className="col-12 col-md-auto">

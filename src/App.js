@@ -31,20 +31,12 @@ function App() {
       setIsLoggedIn(false);
       setUserType(0);
     }, []);
-
+    console.log("salan");
     return <Navigate to="/" replace />;
   };
 
   return (
     <Routes>
-      <Route path="/signup" element={
-        isLoggedIn ? (
-          userType === 2 ? <Navigate to="/dashboard-designer" replace /> : <Navigate to="/dashboard-player" replace />
-        ) : (
-          <Signup />
-        )
-      } />
-      <Route path="/logout" element={<Logout />} />
       <Route
         path="/"
         element={
@@ -56,124 +48,63 @@ function App() {
         }
       />
       <Route
-        path="/dashboard-designer"
+        path="/signup"
         element={
-          isLoggedIn && userType === 2 ? (
-            <DashboardDesigner />
+          isLoggedIn ? (
+            userType === 2 ? <Navigate to="/dashboard-designer" replace /> : <Navigate to="/dashboard-player" replace />
           ) : (
-            <Navigate to="/" replace />
+            <Signup />
           )
         }
+      />
+      <Route path="/logout" element={<Logout />} />
+      <Route
+        path="/dashboard-designer"
+        element={isLoggedIn && userType == 2 ? <DashboardDesigner /> : <Navigate to="/" replace />}
       />
       <Route
         path="/question-designer-list"
-        element={
-          isLoggedIn && userType === 2 ? (
-            <QuestionDesignerList />
-          ) : (
-            <Navigate to="/" replace />
-          )
-        }
+        element={<QuestionDesignerList />}
       />
       <Route
         path="/question-designer-add"
-        element={
-          isLoggedIn && userType === 2 ? (
-            <QuestionDesignerAdd />
-          ) : (
-            <Navigate to="/" replace />
-          )
-        }
+        element={<QuestionDesignerAdd />}
       />
       <Route
         path="/category-designer-list"
-        element={
-          isLoggedIn && userType === 2 ? (
-            <CategoryDesignerList />
-          ) : (
-            <Navigate to="/" replace />
-          )
-        }
+        element={<CategoryDesignerList />}
       />
       <Route
         path="/category-designer-add"
-        element={
-          isLoggedIn && userType === 2 ? (
-            <CategoryDesignerAdd />
-          ) : (
-            <Navigate to="/" replace />
-          )
-        }
+        element={<CategoryDesignerAdd />}
       />
       <Route
         path="/dashboard-player"
-        element={
-          isLoggedIn && userType === 1 ? (
-            <DashboardPlayer />
-          ) : (
-            <Navigate to="/" replace />
-          )
-        }
+        element={isLoggedIn && userType == 1 ? <DashboardPlayer /> : <Navigate to="/" replace />}
       />
       <Route
         path="/question-player-list"
-        element={
-          isLoggedIn && userType === 1 ? (
-            <QuestionPlayerList />
-          ) : (
-            <Navigate to="/" replace />
-          )
-        }
+        element={<QuestionPlayerList />}
       />
       <Route
         path="/score-player"
-        element={
-          isLoggedIn && userType === 1 ? (
-            <ScorePlayer />
-          ) : (
-            <Navigate to="/" replace />
-          )
-        }
+        element={<ScorePlayer />}
       />
       <Route
         path="/answering-player/category/:categoryId"
-        element={
-          isLoggedIn && userType === 1 ? (
-            <AnsweringPlayer type="{category}" />
-          ) : (
-            <Navigate to="/" replace />
-          )
-        }
+        element={<AnsweringPlayer type="category" />}
       />
       <Route
         path="/answering-player/random"
-        element={
-          isLoggedIn && userType === 1 ? (
-            <AnsweringPlayer type="{random}" />
-          ) : (
-            <Navigate to="/" replace />
-          )
-        }
+        element={<AnsweringPlayer type="random" />}
       />
       <Route
         path="/designer-view/:designerId"
-        element={
-          isLoggedIn && userType === 1 ? (
-            <DesignerView />
-          ) : (
-            <Navigate to="/" replace />
-          )
-        }
+        element={<DesignerView />}
       />
       <Route
         path="/player-view/:playerId"
-        element={
-          isLoggedIn && userType === 1 ? (
-            <PlayerView />
-          ) : (
-            <Navigate to="/" replace />
-          )
-        }
+        element={<PlayerView />}
       />
     </Routes>
   );

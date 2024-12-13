@@ -56,7 +56,7 @@ function CategoryDesignerList() {
                 categories.map((category, index) => (
                   <tr key={category.id || index}>
                     <td>{category.id}</td>
-                    <td>{category.category}</td>
+                    <td>{category.name}</td>
                     <td>{category.question_count || 0}</td>
                   </tr>
                 ))

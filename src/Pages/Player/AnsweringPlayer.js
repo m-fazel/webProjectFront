@@ -1,18 +1,72 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NavbarPlayer from '../../Components/NavbarPlayer';
 import { useParams } from "react-router-dom";
+import useApiRequest from '../../Utils/UseApiRequest';
 
 function AnsweringPlayer({type}) {
-    const [selectedOption, setSelectedOption] = useState('');
+    const [selectedOption, setSelectedOption] = useState();
     const { categoryId } = useParams();
+    const [questionData, setQuestionData] = useState(null);
+    const apiRequest = useApiRequest();
+
+    useEffect(() => {
+        const fetchNewQuestion = async () => {
+            const requestData = {
+                type: type,
+                id: categoryId || undefined,
+            };
+
+            const response = await apiRequest('/get_not_answered_question', 'POST', true, requestData);
+            if (response.success) {
+                setQuestionData(response.data); // Store question data if successful
+            } else {
+                alert(response.error.message); // Handle errors
+            }
+        };
+
+        fetchNewQuestion();
+    }, [type, categoryId]);
+
 
     const handleOptionChange = (event) => {
-        setSelectedOption(event.target.value);
+        setSelectedOption(parseInt(event.target.value));
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log('Selected option:', selectedOption);
+
+        // Validate if an option is selected
+        if (!selectedOption) {
+            alert("لطفاً یک گزینه را انتخاب کنید");
+            return;
+        }
+
+        const response = await apiRequest('/check_question_answer', 'POST', true, {
+            question_id: questionData.id,
+            option: selectedOption,
+        });
+
+        if (response.success) {
+            if (response.data.correct) {
+                alert("پاسخ صحیح بود!");
+            } else {
+                alert("پاسخ غلط بود.");
+            }
+
+            // Optionally, fetch the next question after answering
+            const nextQuestionResponse = await apiRequest('/get_not_answered_question', 'POST', true, {
+                type: type,
+                id: categoryId || undefined,
+            });
+            if (nextQuestionResponse.success) {
+                setQuestionData(nextQuestionResponse.data);
+                setSelectedOption(); // Reset the selected option for the next question
+            } else {
+                alert(nextQuestionResponse.error.message);
+            }
+        } else {
+            alert(response.error.message); // Show error message if the answer check fails
+        }
     };
 
     return (
@@ -20,97 +74,52 @@ function AnsweringPlayer({type}) {
             <NavbarPlayer /> {/* Using the existing NavbarPlayer component */}
 
             <div className="container pt-4">
-                <div className="row g-4">
-                    <div className="col-12 col-md-4">
-                        <img src="/img/question.jpg" alt="question" className="w-100 rounded-4 shadow" />
-                    </div>
-                    <div className="col-12 col-md-8 align-self-center">
-                        <form onSubmit={handleSubmit}>
-                            <div className="row g-4">
-                                <div className="col-12">
-                                    <h4>سوالی از طراح دیگر؟</h4>
-                                </div>
-                                <div className="col-12">
-                                    <div className="row g-4 row-cols-1">
-                                        <div className="col">
-                                            <div className="form-check">
-                                                <input
-                                                    className="form-check-input"
-                                                    type="radio"
-                                                    name="option"
-                                                    id="first-option"
-                                                    value="first"
-                                                    checked={selectedOption === 'first'}
-                                                    onChange={handleOptionChange}
-                                                    required
-                                                />
-                                                <label className="form-check-label" htmlFor="first-option">
-                                                    گزینه اول
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div className="col">
-                                            <div className="form-check">
-                                                <input
-                                                    className="form-check-input"
-                                                    type="radio"
-                                                    name="option"
-                                                    id="second-option"
-                                                    value="second"
-                                                    checked={selectedOption === 'second'}
-                                                    onChange={handleOptionChange}
-                                                    required
-                                                />
-                                                <label className="form-check-label" htmlFor="second-option">
-                                                    گزینه دوم
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div className="col">
-                                            <div className="form-check">
-                                                <input
-                                                    className="form-check-input"
-                                                    type="radio"
-                                                    name="option"
-                                                    id="third-option"
-                                                    value="third"
-                                                    checked={selectedOption === 'third'}
-                                                    onChange={handleOptionChange}
-                                                    required
-                                                />
-                                                <label className="form-check-label" htmlFor="third-option">
-                                                    گزینه سوم
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div className="col">
-                                            <div className="form-check">
-                                                <input
-                                                    className="form-check-input"
-                                                    type="radio"
-                                                    name="option"
-                                                    id="fourth-option"
-                                                    value="fourth"
-                                                    checked={selectedOption === 'fourth'}
-                                                    onChange={handleOptionChange}
-                                                    required
-                                                />
-                                                <label className="form-check-label" htmlFor="fourth-option">
-                                                    گزینه چهارم
-                                                </label>
-                                            </div>
+                {questionData ? (
+                    <div className="row g-4">
+                        <div className="col-12 col-md-4">
+                            <img src="/img/question.jpg" alt="question" className="w-100 rounded-4 shadow" />
+                        </div>
+                        <div className="col-12 col-md-8 align-self-center">
+                            <form onSubmit={handleSubmit}>
+                                <div className="row g-4">
+                                    <div className="col-12">
+                                        <h4>{questionData.question}</h4> {/* Displaying the fetched question */}
+                                    </div>
+                                    <div className="col-12">
+                                        <div className="row g-4 row-cols-1">
+                                            {questionData.options.map((option, index) => (
+                                                <div className="col" key={index + 1}>
+                                                    <div className="form-check">
+                                                        <input
+                                                            className="form-check-input"
+                                                            type="radio"
+                                                            name="option"
+                                                            id={`option-${index + 1}`}
+                                                            value={index + 1}
+                                                            checked={selectedOption === (index + 1)}
+                                                            onChange={handleOptionChange}
+                                                            required
+                                                        />
+                                                        <label className="form-check-label" htmlFor={`option-${index + 1}`}>
+                                                            {option}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
+                                    <div className="col-12">
+                                        <button type="submit" className="btn btn-primary">
+                                            ارسال
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="col-12">
-                                    <button type="submit" className="btn btn-primary">
-                                        ارسال
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <div className="text-center">پرسشی یافت نشد</div>
+                )}
             </div>
         </div>
     );

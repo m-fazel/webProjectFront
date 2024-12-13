@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { validateToken, getToken, API_BASE_URL, removeToken } from '../Utils/AuthContext';
 import { useAuth } from './AuthContext';
+import { useEffect } from 'react';
 
 const useApiRequest = () => {
     const navigate = useNavigate();
@@ -17,6 +18,7 @@ const useApiRequest = () => {
                 const authToken = getToken();
                 headers.Authorization = `Bearer ${authToken}`;
             } else {
+                console.log("salan");
                 removeToken();
                 setIsLoggedIn(false);
                 setUserType(0);

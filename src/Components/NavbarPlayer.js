@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 function NavbarPlayer() {
     const location = useLocation();
 
-    const isActive = (path) => location.pathname === path ? 'active' : '';
+    const isActive = (path) => location.pathname.split("/")[1] === path ? 'active' : '';
 
     return (
         <nav className="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
@@ -18,16 +18,16 @@ function NavbarPlayer() {
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
-                            <Link className={`nav-link ${isActive('/dashboard-player')}`} to="/dashboard-player">داشبورد</Link>
+                            <Link className={`nav-link ${isActive('dashboard-player')}`} to="/dashboard-player">داشبورد</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className={`nav-link ${isActive('/question-player-list')}`} to="/question-player-list">مدیریت سوالات</Link>
+                            <Link className={`nav-link ${isActive('question-player-list')} ${isActive('designer-view')}`} to="/question-player-list">مدیریت سوالات</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className={`nav-link ${isActive('/score-player')}`} to="/score-player">جدول امتیازات</Link>
+                            <Link className={`nav-link ${isActive('score-player')} ${isActive('player-view')}`} to="/score-player">جدول امتیازات</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className={`nav-link ${isActive('/logout')}`} to="/logout">خروج</Link>
+                            <Link className={`nav-link ${isActive('logout')}`} to="/logout">خروج</Link>
                         </li>
                     </ul>
                 </div>
