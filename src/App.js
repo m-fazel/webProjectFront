@@ -31,7 +31,7 @@ function App() {
       setIsLoggedIn(false);
       setUserType(0);
     }, []);
-    console.log("salan");
+  
     return <Navigate to="/" replace />;
   };
 

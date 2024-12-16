@@ -18,7 +18,6 @@ const useApiRequest = () => {
                 const authToken = getToken();
                 headers.Authorization = `Bearer ${authToken}`;
             } else {
-                console.log("salan");
                 removeToken();
                 setIsLoggedIn(false);
                 setUserType(0);

@@ -37,7 +37,6 @@ function Signup() {
         if (response.success) {
             alert("ثبت نام شما با موفقیت انجام شد، اکنون میتوانید وارد شوید");
             navigate("/");
-            console.log("salan");
         } else {
             alert(response.error.message);
         }
